@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SoundNova - Modern Music Stream</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+  <style>
+/* ==== Global Reset ==== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #121212;
+  color: #fff;
+  overflow-x: hidden;
+  padding-bottom: 90px; /* Agar konten tidak tertutup player */
+}
+
+/* ==== Background Video ==== */
+video.bg-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  z-index: -1;
+  filter: brightness(0.3);
+}
+
+/* ==== Header ==== */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  cursor: pointer;
+}
+
+nav a {
+  margin: 0 15px;
+  text-decoration: none;
+  color: #ccc;
+  transition: color 0.3s;
+  cursor: pointer;
+}
+
+nav a:hover {
+  color: #fff;
+}
+
+/* ==== Page Transition ==== */
+.page {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.5s ease;
+  display: none;
+  padding: 40px 20px;
+}
+
+.page.active {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ==== Hero Section ==== */
+.hero {
+  text-align: center;
+  margin-top: 80px;
+  animation: fadeIn 1.5s ease-in-out;
+}
+
+.hero h1 {
+  font-size: 48px;
+  color: #fff;
+  animation: floatText 4s infinite ease-in-out;
+}
+
+.hero p {
+  color: #ccc;
+  font-size: 18px;
+  margin-top: 10px;
+}
+
+/* ==== Search Bar ==== */
+.search-container {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.search-container input {
+    width: 80%;
+    max-width: 500px;
+    padding: 12px 20px;
+    border-radius: 25px;
+    border: 1px solid #444;
+    background-color: #333;
+    color: #fff;
+    font-size: 16px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.search-container input:focus {
+    border-color: #1db954;
+    box-shadow: 0 0 15px rgba(29, 185, 84, 0.5);
+}
+
+/* ==== Music Grid ==== */
+.music-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 30px;
+  margin-top: 30px;
+}
+
+.music-card {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 20px;
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: transform 0.3s, background 0.3s;
+  cursor: pointer;
+  position: relative;
+}
+
+.music-card:hover {
+  transform: translateY(-10px);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.music-card img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.music-card h3 {
+  margin-top: 10px;
+  font-size: 18px;
+}
+
+.music-card p {
+  font-size: 14px;
+  color: #aaa;
+}
+
+.music-card .save-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.4);
+  border: none;
+  border-radius: 50%;
+  padding: 5px;
+  cursor: pointer;
+  outline: none;
+}
+
+/* ==== Lyrics Section ==== */
+.lyrics {
+  margin-top: 30px;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 15px;
+  border-radius: 10px;
+  max-height: 200px;
+  overflow-y: auto;
+  font-size: 14px;
+}
+
+/* ==== Music Player Bar ==== */
+.music-player {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: #1e1e1e;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 10;
+}
+
+.controls,
+.volume,
+.progress-container {
+  display: flex;
+  align-items: center;
+}
+
+.controls button {
+  background: none;
+  border: none;
+  color: white;
+  margin: 0 10px;
+  font-size: 18px;
+  cursor: pointer;
+  outline: none;
+}
+
+.volume input,
+.progress-bar input {
+  cursor: pointer;
+  outline: none;
+}
+
+.progress-container {
+  flex: 1;
+  margin: 0 10px;
+}
+
+.progress-time {
+  font-size: 12px;
+  width: 40px;
+  text-align: center;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 4px;
+  background: #444;
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-bar input[type="range"] {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  position: absolute;
+  top: 0;
+  left: 0;
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+}
+
+/* ==== Range Track & Thumb Styling ==== */
+.progress-bar input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  background: #1db954;
+}
+
+.progress-bar input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
+  background: #1db954;
+  margin-top: -4px;
+}
+
+.progress-bar input[type="range"]::-moz-range-track {
+  height: 4px;
+  background: #1db954;
+}
+
+.progress-bar input[type="range"]::-moz-range-thumb {
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
+  background: #1db954;
+  border: none;
+}
+
+/* ==== Notification Bar ==== */
+.notif {
+  position: fixed;
+  top: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1db954;
+  padding: 15px 30px;
+  border-radius: 5px;
+  color: #fff;
+  transition: top 0.5s ease, opacity 0.5s ease;
+  z-index: 20;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.notif.show {
+  top: 20px;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+
+/* ==== Gojo Character & Bubble ==== */
+#gojo-container {
+  position: relative;
+  width: 50px;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+#gojo-gif {
+  width: 100%;
+  pointer-events: none;
+}
+
+#gojo-bubble {
+  position: absolute;
+  top: 105%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  color: #000;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  display: none;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1001;
+  animation: fadeBubble 0.3s ease;
+}
+
+/* ==== Keyframes ==== */
+@keyframes floatText {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeBubble {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* ==== Responsive ==== */
+@media (max-width: 600px) {
+  header {
+    flex-direction: column;
+    padding: 15px;
+  }
+
+  nav a {
+    margin: 5px;
+  }
+
+  .hero h1 {
+    font-size: 32px;
+  }
+
+  .music-grid {
+    gap: 15px;
+  }
+
+  /* ==== Music Player Responsive Fix ==== */
+  .music-player {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .controls {
+    justify-content: center;
+  }
+
+.volume {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 80px;
+  max-width: 120px;
+}
+
+.volume input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background: #444;
+  border-radius: 2px;
+  width: 100%;
+}
+
+.volume input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  background: #1db954;
+  border-radius: 50%;
+  margin-top: -4px;
+  cursor: pointer;
+}
+
+.volume input[type="range"]::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  background: #1db954;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+}
+
+
+  .progress-container {
+    width: 100%;
+    margin: 0;
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .progress-time {
+    font-size: 11px;
+    width: 35px;
+    text-align: center;
+  }
+
+  .progress-bar {
+    flex: 1;
+    height: 6px;
+  }
+}
+
+  </style>
+</head>
+<body>
+  <video autoplay muted loop class="bg-video">
+    <source src="background.mp4" type="video/mp4">
+  </video>
+
+  <header>
+    <div class="logo" onclick="navigate('home')">
+      Kuro'songs
+      <div id="gojo-container">
+        <img id="gojo-gif" src="gojo-unscreen.gif" alt="Gojo Chibi" />
+        <div id="gojo-bubble">Halo~ Mau dengerin lagu apa nih?</div>
+      </div>
+    </div>
+    <nav>
+      <a onclick="navigate('home')">Home</a>
+      <a onclick="navigate('library')">Library</a>
+    </nav>
+  </header>
+
+  <div id="notif" class="notif"></div>
+
+  <div id="home" class="page active">
+    <section class="hero">
+      <h1>all your favorite songs are here</h1>
+      <p>Play, Feel, Repeat.</p>
+    </section>
+    <div class="search-container">
+        <input type="text" id="search-input" placeholder="Search for songs or artists..." onkeyup="filterSongs()">
+    </div>
+    <section class="music-grid" id="music-grid"></section>
+    <div class="lyrics" id="lyrics">Menampilkan nama musik...</div>
+  </div>
+
+  <div id="library" class="page">
+    <h2>Your Saved Songs</h2>
+    <div class="music-grid" id="saved-grid"></div>
+  </div>
+
+  <div class="music-player">
+    <span id="now-playing">Not Playing</span>
+    <div class="controls">
+      <button onclick="prevTrack()">⏮️</button>
+      <button onclick="togglePlay()" id="play-btn">▶️</button>
+      <button onclick="nextTrack()">⏭️</button>
+      <button onclick="toggleShuffle()">🔀</button>
+      <button onclick="toggleRepeat()">🔁</button>
+    </div>
+    <div class="progress-container">
+      <div class="progress-time" id="current-time">0:00</div>
+      <div class="progress-bar">
+        <input type="range" id="progress" min="0" max="100" value="0">
+      </div>
+      <div class="progress-time" id="duration">0:00</div>
+    </div>
+    <div class="volume">
+      <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.7" onchange="setVolume(this.value)">
+    </div>
+    <audio id="audio" onended="handleEnded()"></audio>
+  </div>
+
+  <script>
+const songs = [
+  { title: "Someone to Stay", artist: "Vancouver Sleep Clinic", src: "some to stay.mp3", cover: "", lyrics: "Someone to Stay..." },
+  { title: "Another Love", artist: "Tom Odell", src: "another-love.mp3", cover: "", lyrics: "Another Love..." },
+  { title: "Somebody's Pleasure (Extended)", artist: "Aziz Hendra", src: "Aziz Hendra - Somebody's Pleasure (Extended Version) (Lyrics).mp3", cover: "", lyrics: "Somebody's Pleasure..." },
+  { title: "Beanie (Slowed)", artist: "Unknown", src: "Beanie (Slowed).mp3", cover: "", lyrics: "Beanie' versi slowed..." },
+  { title: "Talking To The Moon (Slowed)", artist: "Bruno Mars", src: "talking the moon.mp3", cover: "", lyrics: "Talking To The Moon..." },
+  { title: "Cardigan (Slowed & Reverb)", artist: "Taylor Swift", src: "cardigan.mp3", cover: "", lyrics: "Cardigan..." },
+  { title: "A Thousand Years", artist: "Christina Perri", src: "Christina Perri - A Thousand Years.mp3", cover: "", lyrics: "A Thousand Years..." },
+  { title: "Cry (Slowed + Rain)", artist: "Cigarettes After Sex", src: "cry.mp3", cover: "", lyrics: "Cry..." },
+  { title: "Mockingbird (Slowed & Reverb)", artist: "Eminem", src: "Eminem - Mockingbird (Slowed & Reverb).mp3", cover: "", lyrics: "Mockingbird..." },
+  { title: "Stan (Lofi Remix)", artist: "Eminem", src: "stan lofi.mp3", cover: "", lyrics: "Stan remix..." },
+  { title: "Ghost MW2 (Slowed Reverb)", artist: "Famy Ava", src: "famy ava.mp3", cover: "", lyrics: "Ghost MW2..." },
+  { title: "Fix You (Speed Up & Reverb)", artist: "Coldplay", src: "coldplay.mp3", cover: "", lyrics: "Fix You..." },
+  { title: "Mary on a Cross (Acoustic Cover)", artist: "Ghost (Cover)", src: "GHOST - Mary on a Cross (ACOUSTIC COVER).mp3", cover: "", lyrics: "Mary on a Cross' versi akustik..." },
+  { title: "Hurt So Good (Slowed)", artist: "Astrid S", src: "hurt so good.mp3", cover: "", lyrics: "Hurt So Good..." },
+  { title: "I Wanna Be Yours (Slowed & Reverb)", artist: "Arctic Monkeys", src: "iwana be yours.mp3", cover: "", lyrics: "I Wanna Be Yours..." },
+  { title: "It Will Rain (Acoustic Cover)", artist: "Francis Greg", src: "It Will Rain COVER Francis Greg (Lyrics) Acoustic.mp3", cover: "", lyrics: "It Will Rain' versi cover..." },
+  { title: "Kerosene (Slowed & Reverb)", artist: "Miranda Lambert", src: "Kerosene (slowed & reverb).mp3", cover: "", lyrics: "Kerosene..." },
+  { title: "Die With A Smile (Slowed & Reverb)", artist: "Lady Gaga ft. Bruno Mars", src: "die with smile.mp3", cover: "", lyrics: "Die With A Smile..." },
+  { title: "Those Eyes (Slowed & Reverb)", artist: "New West", src: "those eyes.mp3", cover: "", lyrics: "Those Eyes..." },
+  { title: "Rahasia Hati (Speed Up)", artist: "Nidji", src: "Nidji - rahasia hati (speed up).mp3", cover: "", lyrics: "Rahasia Hati..." },
+  { title: "Strong", artist: "One Direction", src: "One Direction - Strong (Lyrics).mp3", cover: "", lyrics: "Strong..." },
+  { title: "Past Lives (Sad Version)", artist: "Sapientdream", src: "past lives - sapientdream (tiktok versión sad video).mp3", cover: "", lyrics: "Past Lives..." },
+  { title: "Payphone (Slowed Reverb)", artist: "Maroon 5", src: "payphone.mp3", cover: "", lyrics: "Payphone..." },
+  { title: "Death Bed (Slowed)", artist: "Powfu", src: "Powf - death bed (slowed).mp3", cover: "", lyrics: "Death Bed..." },
+  { title: "Right Now (Speed Up, Reverb)", artist: "One Direction", src: "right now.mp3", cover: "", lyrics: "Right Now..." },
+  { title: "Somewhere Only We Know (Slowed)", artist: "Keane", src: "Somewhere only we know - keane (slowed reverb) tiktok version.mp3", cover: "", lyrics: "Somewhere Only We Know..." },
+  { title: "I Love You So", artist: "The Walters", src: "The Walters -- I Love You So.mp3", cover: "", lyrics: "I Love You So..." },
+  { title: "To The Bone (Slowed & Reverb)", artist: "Pamungkas", src: "To The Bone - Pamungkas (slowed and reverb).mp3", cover: "", lyrics: "To The Bone..." },
+  { title: "Blue", artist: "Yung Kai", src: "yung kai - blue (Lyrics).mp3", cover: "", lyrics: "Blue..." }
+];
+
+
+    const audio = document.getElementById('audio'),
+          nowPlaying = document.getElementById('now-playing'),
+          playBtn = document.getElementById('play-btn'),
+          vol = document.getElementById('volume-slider'),
+          progress = document.getElementById('progress'),
+          currentTimeEl = document.getElementById('current-time'),
+          durationEl = document.getElementById('duration'),
+          lyricsEl = document.getElementById('lyrics'),
+          notif = document.getElementById('notif'),
+          searchInput = document.getElementById('search-input');
+
+    let current = 0, isPlaying = false, shuffle = false, repeat = false;
+
+    function renderSongs(filteredSongs = songs) {
+      const grid = document.getElementById('music-grid');
+      grid.innerHTML = '';
+      filteredSongs.forEach((s, i) => {
+        // Find the original index of the song in the 'songs' array
+        const originalIndex = songs.findIndex(song => song.src === s.src); 
+
+        const card = document.createElement('div');
+        card.className = 'music-card';
+        card.innerHTML = `
+          <img src="${s.cover}" alt="">
+          <h3>${s.title}</h3><p>${s.artist}</p>
+          <button class="save-btn" onclick="toggleSave(${originalIndex}, event)">⭐</button>`;
+        card.onclick = () => playTrack(originalIndex);
+        grid.appendChild(card);
+      });
+    }
+
+    function renderSaved() {
+      const grid = document.getElementById('saved-grid');
+      const saved = JSON.parse(localStorage.getItem('saved')||'[]');
+      grid.innerHTML = '';
+      saved.forEach(i => {
+        const s = songs[i];
+        const card = document.createElement('div');
+        card.className = 'music-card';
+        card.innerHTML = `
+          <img src="${s.cover}" alt="">
+          <h3>${s.title}</h3><p>${s.artist}</p>
+          <button class="save-btn" onclick="toggleSave(${i}, event)">❌</button>`;
+        card.onclick = () => playTrack(i);
+        grid.appendChild(card);
+      });
+    }
+
+    function playTrack(i) {
+      current = i;
+      audio.src = songs[i].src;
+      audio.play();
+      isPlaying = true;
+      nowPlaying.textContent = `♫ ${songs[i].title} – ${songs[i].artist}`;
+      lyricsEl.textContent = songs[i].lyrics;
+      playBtn.textContent = '⏸️';
+      showNotif(`Playing: ${songs[i].title}`);
+    }
+
+    function togglePlay() {
+      if(isPlaying) audio.pause(); else audio.play();
+      isPlaying = !isPlaying;
+      playBtn.textContent = isPlaying ? '⏸️' : '▶️';
+    }
+
+    function nextTrack() {
+      current = shuffle ? Math.floor(Math.random()*songs.length) : (current+1)%songs.length;
+      playTrack(current);
+    }
+
+    function prevTrack() {
+      current = shuffle ? Math.floor(Math.random()*songs.length) : (current-1+songs.length)%songs.length;
+      playTrack(current);
+    }
+
+    function toggleShuffle() { shuffle = !shuffle; showNotif(`Shuffle ${shuffle?'On':'Off'}`); }
+    function toggleRepeat() { repeat = !repeat; showNotif(`Repeat ${repeat?'On':'Off'}`); }
+    function handleEnded() { repeat ? playTrack(current) : nextTrack(); }
+    function setVolume(v) { audio.volume = v; }
+
+    function toggleSave(i, e) {
+      e.stopPropagation();
+      const arr = JSON.parse(localStorage.getItem('saved')||'[]');
+      const idx = arr.indexOf(i);
+      if(idx >= 0) arr.splice(idx,1);
+      else arr.push(i);
+      localStorage.setItem('saved', JSON.stringify(arr));
+      renderSaved(); renderSongs(); // Re-render both grids to update save buttons
+      showNotif(idx >= 0 ? 'Removed!' : 'Saved!');
+    }
+
+    function showNotif(msg) {
+      notif.textContent = msg;
+      notif.classList.add('show');
+      setTimeout(() => notif.classList.remove('show'), 2000);
+    }
+
+    function navigate(page) {
+      document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+      document.getElementById(page).classList.add('active');
+      if(page === 'library') renderSaved();
+      if(page === 'home') renderSongs(); // Re-render home page to show all songs when navigating back
+    }
+
+    // Function to filter songs based on search input
+    function filterSongs() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const filtered = songs.filter(song => 
+            song.title.toLowerCase().includes(searchTerm) || 
+            song.artist.toLowerCase().includes(searchTerm)
+        );
+        renderSongs(filtered);
+    }
+
+    // Progress bar update and seeking
+    audio.addEventListener('timeupdate', () => {
+      if(!isNaN(audio.duration)) {
+        const pct = (audio.currentTime / audio.duration) * 100;
+        progress.value = pct;
+        currentTimeEl.textContent = formatTime(audio.currentTime);
+        durationEl.textContent = formatTime(audio.duration);
+      }
+    });
+
+    progress.addEventListener('input', () => {
+      if(!isNaN(audio.duration)) {
+        audio.currentTime = (progress.value/100)*audio.duration;
+      }
+    });
+
+    function formatTime(sec) {
+      const m = Math.floor(sec/60), s = Math.floor(sec%60).toString().padStart(2,'0');
+      return `${m}:${s}`;
+    }
+
+    // Gojo interactive bubble
+    const gojoBubble = document.getElementById('gojo-bubble');
+    const gojoMessages = [
+      "Halo~ Mau dengerin lagu apa nih?",
+      "semangatt ya broo~~",
+      "Jangan lupa senyum ya~",
+      "Udah minum air belum?",
+      "gw temenin santtayy~~",
+      "yahh tidur dah~~",
+      "Kuro'songs selalu nemenin lu broo~",
+      "Cie dengerin lagu romantis~",
+      "Aku chibi Gojo, Teman musikmu~~"
+    ];
+    function showGojoMessage() {
+      gojoBubble.textContent = gojoMessages[Math.floor(Math.random()*gojoMessages.length)];
+      gojoBubble.style.display = 'block';
+      setTimeout(() => gojoBubble.style.display = 'none', 3500);
+    }
+    setTimeout(showGojoMessage,2000);
+    setInterval(showGojoMessage,10000);
+
+    // Initialization
+    renderSongs();
+    setVolume(vol.value);
+  </script>
+</body>
+</html>
