@@ -24,7 +24,7 @@
         padding-bottom: 90px; /* Agar konten tidak tertutup player */
       }
 
-      /* ==== Background Video ==== */
+      /* ==== Background Video (Default for PC) ==== */
       video.bg-video {
         position: fixed;
         top: 0;
@@ -43,8 +43,8 @@
         align-items: center;
         padding: 20px 40px;
         background: rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(5px);
-        -webkit-backdrop-filter: blur(5px);
+        backdrop-filter: blur(5px); /* Tetap aktif di PC */
+        -webkit-backdrop-filter: blur(5px); /* Tetap aktif di PC */
         position: sticky;
         top: 0;
         z-index: 10;
@@ -140,8 +140,8 @@
         background: rgba(255, 255, 255, 0.05);
         padding: 20px;
         border-radius: 15px;
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px); /* Tetap aktif di PC */
+        -webkit-backdrop-filter: blur(10px); /* Tetap aktif di PC */
         transition: transform 0.3s, background 0.3s;
         cursor: pointer;
         position: relative;
@@ -369,11 +369,27 @@
         }
       }
 
-      /* ==== Responsive ==== */
-      @media (max-width: 600px) {
+      /* --- Responsive --- */
+      @media (max-width: 768px) {
+        /* ==== Background untuk HP: Ganti Video dengan Gambar ==== */
+        video.bg-video {
+          display: none; /* Sembunyikan video */
+        }
+        body {
+          background-image: url('backgroundgambar.jpg'); /* Ganti dengan nama file gambar kamu */
+          background-size: cover;
+          background-position: center;
+          background-attachment: fixed;
+          background-repeat: no-repeat;
+        }
+
+        /* ==== Header & Music Card untuk HP: Nonaktifkan Backdrop Filter ==== */
         header {
           flex-direction: column;
           padding: 15px;
+          backdrop-filter: none; /* Nonaktifkan blur di HP */
+          -webkit-backdrop-filter: none; /* Nonaktifkan blur di HP */
+          background: rgba(0, 0, 0, 0.85); /* Beri warna latar belakang solid yang lebih gelap di HP */
         }
 
         nav a {
@@ -386,6 +402,12 @@
 
         .music-grid {
           gap: 15px;
+        }
+
+        .music-card {
+          backdrop-filter: none; /* Nonaktifkan blur di HP */
+          -webkit-backdrop-filter: none; /* Nonaktifkan blur di HP */
+          background: rgba(255, 255, 255, 0.1); /* Beri warna latar belakang solid yang semi-transparan di HP */
         }
 
         /* ==== Music Player Responsive Fix ==== */
@@ -535,203 +557,203 @@
           title: "Someone to Stay",
           artist: "Vancouver Sleep Clinic",
           src: "some to stay.mp3",
-          cover: "",
+          cover: "someone to stay.jpg", // Pastikan kamu mengisi ini dengan path gambar cover yang valid
           lyrics: "Someone to Stay...",
         },
         {
           title: "Another Love",
           artist: "Tom Odell",
           src: "another-love.mp3",
-          cover: "",
+          cover: "another love.jpg",
           lyrics: "Another Love...",
         },
         {
           title: "Somebody's Pleasure (Extended)",
           artist: "Aziz Hendra",
           src: "Aziz Hendra - Somebody's Pleasure (Extended Version) (Lyrics).mp3",
-          cover: "",
+          cover: "somebody pleasure.jpg",
           lyrics: "Somebody's Pleasure...",
         },
         {
           title: "Beanie (Slowed)",
           artist: "Unknown",
           src: "Beanie (Slowed).mp3",
-          cover: "",
+          cover: "beanie.jpg",
           lyrics: "Beanie' versi slowed...",
         },
         {
           title: "Talking To The Moon (Slowed)",
           artist: "Bruno Mars",
           src: "talking the moon.mp3",
-          cover: "",
+          cover: "talking talk to moon.jpg",
           lyrics: "Talking To The Moon...",
         },
         {
           title: "Cardigan (Slowed & Reverb)",
           artist: "Taylor Swift",
           src: "cardigan.mp3",
-          cover: "",
+          cover: "cardigan.jpg",
           lyrics: "Cardigan...",
         },
         {
           title: "A Thousand Years",
           artist: "Christina Perri",
           src: "Christina Perri - A Thousand Years.mp3",
-          cover: "",
+          cover: "a thausand years.jpg",
           lyrics: "A Thousand Years...",
         },
         {
           title: "Cry (Slowed + Rain)",
           artist: "Cigarettes After Sex",
           src: "cry.mp3",
-          cover: "",
+          cover: "cry.jpg",
           lyrics: "Cry...",
         },
         {
           title: "Mockingbird (Slowed & Reverb)",
           artist: "Eminem",
           src: "Eminem - Mockingbird (Slowed & Reverb).mp3",
-          cover: "",
+          cover: "mockingbird.jpg",
           lyrics: "Mockingbird...",
         },
         {
           title: "Stan (Lofi Remix)",
           artist: "Eminem",
           src: "stan lofi.mp3",
-          cover: "",
+          cover: "stan lofi.jpg",
           lyrics: "Stan remix...",
         },
         {
           title: "Ghost MW2 (Slowed Reverb)",
           artist: "Famy Ava",
           src: "famy ava.mp3",
-          cover: "",
+          cover: "ghost.jpg",
           lyrics: "Ghost MW2...",
         },
         {
           title: "Fix You (Speed Up & Reverb)",
           artist: "Coldplay",
           src: "coldplay.mp3",
-          cover: "",
+          cover: "fix you.jpg",
           lyrics: "Fix You...",
         },
         {
           title: "Mary on a Cross (Acoustic Cover)",
           artist: "Ghost (Cover)",
           src: "GHOST - Mary on a Cross (ACOUSTIC COVER).mp3",
-          cover: "",
+          cover: "marry on a cross.jpg",
           lyrics: "Mary on a Cross' versi akustik...",
         },
         {
           title: "Hurt So Good (Slowed)",
           artist: "Astrid S",
           src: "hurt so good.mp3",
-          cover: "",
+          cover: "hurts so good.jpg",
           lyrics: "Hurt So Good...",
         },
         {
           title: "I Wanna Be Yours (Slowed & Reverb)",
           artist: "Arctic Monkeys",
           src: "iwana be yours.mp3",
-          cover: "",
+          cover: "i wanna be yours.jpg",
           lyrics: "I Wanna Be Yours...",
         },
         {
           title: "It Will Rain (Acoustic Cover)",
           artist: "Francis Greg",
           src: "It Will Rain COVER Francis Greg (Lyrics) Acoustic.mp3",
-          cover: "",
+          cover: "its will rain.jpg",
           lyrics: "It Will Rain' versi cover...",
         },
         {
           title: "Kerosene (Slowed & Reverb)",
           artist: "Miranda Lambert",
           src: "Kerosene (slowed & reverb).mp3",
-          cover: "",
+          cover: "kerosene.jpg",
           lyrics: "Kerosene...",
         },
         {
           title: "Die With A Smile (Slowed & Reverb)",
           artist: "Lady Gaga ft. Bruno Mars",
           src: "die with smile.mp3",
-          cover: "",
+          cover: "die with a smile.jpg",
           lyrics: "Die With A Smile...",
         },
         {
           title: "Those Eyes (Slowed & Reverb)",
           artist: "New West",
           src: "those eyes.mp3",
-          cover: "",
+          cover: "those eyes.jpg",
           lyrics: "Those Eyes...",
         },
         {
           title: "Rahasia Hati (Speed Up)",
           artist: "Nidji",
           src: "Nidji - rahasia hati (speed up).mp3",
-          cover: "",
+          cover: "Rahasia Hati.jpg",
           lyrics: "Rahasia Hati...",
         },
         {
           title: "Strong",
           artist: "One Direction",
           src: "One Direction - Strong (Lyrics).mp3",
-          cover: "",
+          cover: "strong.jpg",
           lyrics: "Strong...",
         },
         {
           title: "Past Lives (Sad Version)",
           artist: "Sapientdream",
           src: "past lives - sapientdream (tiktok versión sad video).mp3",
-          cover: "",
+          cover: "past lives.jpg",
           lyrics: "Past Lives...",
         },
         {
           title: "Payphone (Slowed Reverb)",
           artist: "Maroon 5",
           src: "payphone.mp3",
-          cover: "",
+          cover: "payphone.jpg",
           lyrics: "Payphone...",
         },
         {
           title: "Death Bed (Slowed)",
           artist: "Powfu",
           src: "Powf - death bed (slowed).mp3",
-          cover: "",
+          cover: "deathbed.jpg",
           lyrics: "Death Bed...",
         },
         {
           title: "Right Now (Speed Up, Reverb)",
           artist: "One Direction",
           src: "right now.mp3",
-          cover: "",
+          cover: "right now.jpg",
           lyrics: "Right Now...",
         },
         {
           title: "Somewhere Only We Know (Slowed)",
           artist: "Keane",
           src: "Somewhere only we know - keane (slowed reverb) tiktok version.mp3",
-          cover: "",
+          cover: "some where only we know.jpg",
           lyrics: "Somewhere Only We Know...",
         },
         {
           title: "I Love You So",
           artist: "The Walters",
           src: "The Walters -- I Love You So.mp3",
-          cover: "",
+          cover: "i love you so.jpg",
           lyrics: "I Love You So...",
         },
         {
           title: "To The Bone (Slowed & Reverb)",
           artist: "Pamungkas",
           src: "To The Bone - Pamungkas (slowed and reverb).mp3",
-          cover: "",
+          cover: "to the bone.jpg",
           lyrics: "To The Bone...",
         },
         {
           title: "Blue",
           artist: "Yung Kai",
           src: "yung kai - blue (Lyrics).mp3",
-          cover: "",
+          cover: "blue.jpg",
           lyrics: "Blue...",
         },
       ];
@@ -751,6 +773,7 @@
         isPlaying = false,
         shuffle = false,
         repeat = false;
+      let searchTimeout; // **Tambahkan ini untuk debounce pencarian**
 
       function renderSongs(filteredSongs = songs) {
         const grid = document.getElementById("music-grid");
@@ -761,8 +784,10 @@
 
           const card = document.createElement("div");
           card.className = "music-card";
+          // Periksa apakah ada cover, jika tidak, gunakan placeholder atau kosongkan img
+          const coverSrc = s.cover ? s.cover : 'placeholder.jpg'; // Ganti 'placeholder.jpg' dengan gambar default jika ada
           card.innerHTML = `
-          <img src="${s.cover}" alt="">
+          <img src="${coverSrc}" alt="Cover ${s.title}">
           <h3>${s.title}</h3><p>${s.artist}</p>
           <button class="save-btn" onclick="toggleSave(${originalIndex}, event)">⭐</button>`;
           card.onclick = () => playTrack(originalIndex);
@@ -778,8 +803,9 @@
           const s = songs[i];
           const card = document.createElement("div");
           card.className = "music-card";
+          const coverSrc = s.cover ? s.cover : 'placeholder.jpg'; // Ganti 'placeholder.jpg'
           card.innerHTML = `
-          <img src="${s.cover}" alt="">
+          <img src="${coverSrc}" alt="Cover ${s.title}">
           <h3>${s.title}</h3><p>${s.artist}</p>
           <button class="save-btn" onclick="toggleSave(${i}, event)">❌</button>`;
           card.onclick = () => playTrack(i);
@@ -862,15 +888,20 @@
       }
 
       // Function to filter songs based on search input
-      function filterSongs() {
-        const searchTerm = searchInput.value.toLowerCase();
-        const filtered = songs.filter(
-          (song) =>
-            song.title.toLowerCase().includes(searchTerm) ||
-            song.artist.toLowerCase().includes(searchTerm)
-        );
-        renderSongs(filtered);
-      }
+      // **Modifikasi function filterSongs ini untuk debounce**
+      searchInput.addEventListener("keyup", () => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          const searchTerm = searchInput.value.toLowerCase();
+          const filtered = songs.filter(
+            (song) =>
+              song.title.toLowerCase().includes(searchTerm) ||
+              song.artist.toLowerCase().includes(searchTerm)
+          );
+          renderSongs(filtered);
+        }, 300); // Penundaan 300ms
+      });
+      // hapus function filterSongs() yang lama jika ada (yang kosong)
 
       // Progress bar update and seeking
       audio.addEventListener("timeupdate", () => {
